@@ -1,0 +1,55 @@
+digraph architecture {
+  rankdir=LR;
+  bgcolor="#0d1117";
+  fontname="Helvetica"; fontcolor="#c9d1d9"; labelloc="t";
+  label="smol-jobscout — Architecture";
+  node [fontname="Helvetica", fontsize=11, style="filled,rounded", shape=box,
+        color="#30363d", fontcolor="#e6edf3", penwidth=1.2];
+  edge [fontname="Helvetica", fontsize=9, color="#8b949e", fontcolor="#8b949e"];
+
+  subgraph cluster_entry {
+    label="Entry points"; color="#30363d"; fontcolor="#58a6ff"; style="rounded";
+    cli  [label="jobscout CLI\n(cli.py)", fillcolor="#1f6feb"];
+    ui   [label="Gradio UI\n(ui.py, :7860)", fillcolor="#1f6feb"];
+  }
+
+  user [label="User", shape=oval, fillcolor="#238636"];
+
+  subgraph cluster_core {
+    label="Agent core"; color="#30363d"; fontcolor="#58a6ff"; style="rounded";
+    agent [label="CodeAgent\n(agent.py)\nadd_base_tools=False\nexecutor_type=local", fillcolor="#8957e5"];
+    exec  [label="Local Python\nexecutor\n(LLM-written code)", fillcolor="#6e40c9"];
+  }
+
+  cfg   [label="Settings\n(config.py)\nconfig.yaml + .env", fillcolor="#9e6a03"];
+  model [label="Ollama model\nvia LiteLLM\nollama_chat/qwen2.5-coder:14b", fillcolor="#bb8009"];
+
+  subgraph cluster_tools {
+    label="Tools (tools.py)"; color="#30363d"; fontcolor="#58a6ff"; style="rounded";
+    qj   [label="query_jobs", fillcolor="#0969da"];
+    gj   [label="get_job", fillcolor="#0969da"];
+    web  [label="WebSearchTool\nVisitWebpageTool\n(import-guarded)", fillcolor="#373e47"];
+  }
+
+  data  [label="Data layer (data.py)\nload_jobs / search_jobs / to_brief\nNO LLM", fillcolor="#1a7f37"];
+  corpus[label="Jobs corpus\nJSONL | SQLite", shape=cylinder, fillcolor="#054d2e"];
+  internet[label="Web", shape=oval, fillcolor="#373e47"];
+  obs   [label="obs.py\nlogging + Prometheus", fillcolor="#6e7681"];
+
+  user -> cli [label="question"];
+  user -> ui  [label="chat"];
+  cli -> agent;
+  ui  -> agent;
+  cfg -> agent [style=dashed, label="validated settings"];
+  cfg -> model [style=dashed];
+  agent -> model [dir=both, label="chat completion"];
+  agent -> exec [label="emit Python"];
+  exec -> qj;
+  exec -> gj;
+  exec -> web;
+  qj -> data;
+  gj -> data;
+  data -> corpus [dir=both];
+  web -> internet [dir=both];
+  agent -> obs [style=dotted, label="per-step metrics"];
+}

@@ -1,0 +1,31 @@
+digraph howto {
+  rankdir=TB;
+  bgcolor="#0d1117";
+  fontname="Helvetica"; fontcolor="#c9d1d9"; labelloc="t";
+  label="HOWTO — setup to first answer (and your own data)";
+  node [fontname="Helvetica", fontsize=10, style="filled,rounded", shape=box,
+        color="#30363d", fontcolor="#e6edf3"];
+  edge [fontname="Helvetica", fontsize=9, color="#8b949e", fontcolor="#8b949e"];
+
+  py   [label="Python 3.11+\n(system 3.10 fails the pin!\nuse python3.12 -m venv)", fillcolor="#9e6a03"];
+  venv [label="python3.12 -m venv .venv\nsource .venv/bin/activate", fillcolor="#1f6feb"];
+  inst [label="pip install -e \".[dev,ui]\"", fillcolor="#1f6feb"];
+  oll  [label="Ollama serving :11434\nollama pull qwen2.5-coder:14b", fillcolor="#bb8009"];
+  t1   [label="pytest  (Tier-1, no model)", fillcolor="#1a7f37"];
+  ask  [label="jobscout \"How many postings\nmention Python?\"", fillcolor="#238636"];
+
+  smoke[label="pytest -m integration\n(needs Ollama; else skips)", fillcolor="#143d28"];
+  ev   [label="python scripts/eval.py\n-> docs/eval_results.md", fillcolor="#143d28"];
+  ui   [label="make ui  ->  :7860", fillcolor="#8957e5"];
+
+  own  [label="Use your own data", shape=oval, fillcolor="#6e40c9"];
+  cfg  [label="edit config.yaml\ndata.path / data.format", fillcolor="#0969da"];
+  ing  [label="scripts/ingest_crawler.py\n--input dump.json --output data/jobs.jsonl", fillcolor="#0969da"];
+
+  py -> venv -> inst -> oll -> t1 -> ask;
+  ask -> smoke [style=dashed];
+  ask -> ev [style=dashed];
+  ask -> ui [style=dashed];
+  own -> cfg; own -> ing; ing -> cfg;
+  cfg -> ask [style=dotted, label="re-run"];
+}

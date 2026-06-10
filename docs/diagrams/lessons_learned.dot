@@ -1,0 +1,33 @@
+digraph lessons_learned {
+  rankdir=LR;
+  bgcolor="#0d1117";
+  fontname="Helvetica"; fontcolor="#c9d1d9"; labelloc="t";
+  label="Lessons learned — observed failure -> fix";
+  node [fontname="Helvetica", fontsize=10, style="filled,rounded", shape=box,
+        color="#30363d", fontcolor="#e6edf3"];
+  edge [fontname="Helvetica", fontsize=9, color="#8b949e", fontcolor="#8b949e", label="fix"];
+
+  // failures (red) -> fixes (green)
+  f1 [label="len(query_jobs result)\nreturned 2372\n(char count of joined string)", fillcolor="#5a1e1e", color="#f85149"];
+  x1 [label="query_jobs leads output with\n'... (count=N)' header", fillcolor="#143d28", color="#3fb950"];
+
+  f2 [label="num_ctx default 2048\nsilently wrecks agent runs", fillcolor="#5a1e1e", color="#f85149"];
+  x2 [label="set num_ctx>=8192;\nconfig warns when <4096", fillcolor="#143d28", color="#3fb950"];
+
+  f3 [label="vague prompt 'use the tools'\nloops to max_steps", fillcolor="#5a1e1e", color="#f85149"];
+  x3 [label="explicit prompt finalizes\nin ~2 steps / 8s", fillcolor="#143d28", color="#3fb950"];
+
+  f4 [label="'rust' matched 'tRUSTworthy'\n(substring false-friend)", fillcolor="#5a1e1e", color="#f85149"];
+  x4 [label="word-boundary regex in\nsearch_jobs (alnum terms)", fillcolor="#143d28", color="#3fb950"];
+
+  f5 [label="isinstance(answer,str) failed\nfinal_answer(10) kept int", fillcolor="#5a1e1e", color="#f85149"];
+  x5 [label="coerce: str(answer);\nCLI print() already safe", fillcolor="#143d28", color="#3fb950"];
+
+  f6 [label="model drifts to WebSearch\nfor a salary in local data", fillcolor="#5a1e1e", color="#f85149"];
+  x6 [label="steer prompt to local corpus\nor disable web tools", fillcolor="#143d28", color="#3fb950"];
+
+  f1 -> x1; f2 -> x2; f3 -> x3; f4 -> x4; f5 -> x5; f6 -> x6;
+
+  ceiling [label="Reliability ceiling: 7b & 14b both pass simple count/lookup,\nboth fail harder filter/format + field-extraction prompts (2/4 eval)",
+           shape=box, style="filled,dashed", fillcolor="#161b22", fontcolor="#d29922"];
+}

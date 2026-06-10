@@ -1,0 +1,36 @@
+digraph future_directions {
+  rankdir=LR;
+  bgcolor="#0d1117";
+  fontname="Helvetica"; fontcolor="#c9d1d9"; labelloc="t";
+  label="Future directions";
+  node [fontname="Helvetica", fontsize=10, style="filled,rounded", shape=box,
+        color="#30363d", fontcolor="#e6edf3"];
+  edge [fontname="Helvetica", fontsize=9, color="#8b949e"];
+
+  now [label="smol-jobscout v0.1\nlocal CodeAgent + tools + eval", fillcolor="#238636"];
+
+  subgraph cluster_quality {
+    label="Reliability"; color="#30363d"; fontcolor="#58a6ff"; style="rounded";
+    n1 [label="Constrain answers:\nstructured/JSON outputs", fillcolor="#0969da"];
+    n2 [label="Toggle web tools per-query\n(stop salary drift)", fillcolor="#0969da"];
+    n3 [label="Eval gate in CI\n(track pass-rate over time)", fillcolor="#0969da"];
+  }
+
+  subgraph cluster_features {
+    label="Features"; color="#30363d"; fontcolor="#58a6ff"; style="rounded";
+    n4 [label="fit_score(job_id, profile)\nscore vs candidate profile", fillcolor="#8957e5"];
+    n5 [label="Multi-agent: manager +\nweb_search_agent enrichment", fillcolor="#8957e5"];
+    n6 [label="SQLite-backed corpus\n+ FTS for scale", fillcolor="#8957e5"];
+  }
+
+  subgraph cluster_deploy {
+    label="Deploy / safety"; color="#30363d"; fontcolor="#58a6ff"; style="rounded";
+    n7 [label="Sandboxed executor\n(Docker/E2B) for shared use", fillcolor="#9e6a03"];
+    n8 [label="Prometheus dashboard\n(reuse obs.py metrics)", fillcolor="#9e6a03"];
+    n9 [label="Notebook / write-up\nlinked from README", fillcolor="#9e6a03"];
+  }
+
+  now -> n1; now -> n2; now -> n3;
+  now -> n4; now -> n5; now -> n6;
+  now -> n7; now -> n8; now -> n9;
+}

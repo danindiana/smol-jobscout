@@ -1,0 +1,29 @@
+digraph how_it_works {
+  rankdir=TB;
+  bgcolor="#0d1117";
+  fontname="Helvetica"; fontcolor="#c9d1d9"; labelloc="t";
+  label="How it works — one query, step by step";
+  node [fontname="Helvetica", fontsize=11, style="filled,rounded", shape=box,
+        color="#30363d", fontcolor="#e6edf3"];
+  edge [fontname="Helvetica", fontsize=9, color="#8b949e", fontcolor="#8b949e"];
+
+  q   [label="\"How many postings mention Python?\"", shape=note, fillcolor="#1f6feb"];
+  plan[label="1. Initial plan\n(planning_interval=3)\nfacts + step plan", fillcolor="#8957e5"];
+  step[label="2. Step: model emits Python\nquery_jobs(keyword='Python', limit=25)", fillcolor="#6e40c9"];
+  run [label="3. Local executor runs the code", fillcolor="#6e40c9"];
+  tool[label="4. query_jobs -> data.search_jobs\nreturns 'Found 10 ... (count=10)'", fillcolor="#0969da"];
+  read[label="5. Model reads count=10\n(NOT len(string) -> would be 2372)", fillcolor="#1a7f37"];
+  fin [label="6. final_answer(10)\n(type preserved: int)", fillcolor="#238636"];
+  out [label="stdout: 10\n(traces -> stderr)", shape=note, fillcolor="#238636"];
+
+  q -> plan -> step -> run -> tool -> read -> fin -> out;
+
+  loop [label="loop up to max_steps=8\nuntil final_answer", shape=oval,
+        fillcolor="#9e6a03", fontcolor="#0d1117"];
+  run -> loop [style=dashed, dir=none];
+  loop -> step [style=dashed, label="if not done"];
+
+  note [label="num_ctx=8192 (Ollama default 2048 breaks agents)\nollama_chat/ prefix for correct roles",
+        shape=box, style="filled,dashed", fillcolor="#161b22", fontcolor="#f85149"];
+  { rank=same; plan; note; }
+}
