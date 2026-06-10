@@ -9,6 +9,8 @@
   <img alt="Ruff" src="https://img.shields.io/badge/lint-ruff-261230?logo=ruff&logoColor=white">
   <img alt="Tests" src="https://img.shields.io/badge/tests-15%20passing-3fb950">
   <img alt="GPU" src="https://img.shields.io/badge/runs%20on-one%20consumer%20GPU-76B900?logo=nvidia&logoColor=white">
+  <img alt="GPU0" src="https://img.shields.io/badge/GPU0-RTX%205080%2016GB-76B900?logo=nvidia&logoColor=white">
+  <img alt="GPU1" src="https://img.shields.io/badge/GPU1-RTX%203080%2010GB-76B900?logo=nvidia&logoColor=white">
   <img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
 </p>
 
