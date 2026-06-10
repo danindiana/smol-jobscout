@@ -53,7 +53,8 @@ def main(argv: list[str] | None = None) -> int:
         if m:
             m.runs.inc()
             m.latency.observe(time.perf_counter() - start)
-            m.steps.inc(len(getattr(agent.memory, "steps", []) or []))
+            # per-step counts (jobscout_steps, jobscout_tool_calls_total) are
+            # incremented in the agent's step callback (obs.make_step_callback).
     except Exception:
         if m:
             m.errors.inc()

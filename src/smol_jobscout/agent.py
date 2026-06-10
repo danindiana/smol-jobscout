@@ -15,6 +15,7 @@ from smolagents import CodeAgent
 
 from .config import get_settings
 from .model import build_model
+from .obs import make_step_callback
 from .tools import build_web_tools, get_job, query_jobs
 
 log = logging.getLogger("smol_jobscout.agent")
@@ -40,4 +41,5 @@ def build_agent():
         verbosity_level=s.agent.verbosity_level,
         planning_interval=s.agent.planning_interval,
         executor_type="local",               # SEE SECURITY NOTE above
+        step_callbacks=[make_step_callback(log)],  # one log line + metrics per step
     )

@@ -7,7 +7,7 @@
   <img alt="Ollama" src="https://img.shields.io/badge/Ollama-local%20LLM-000000?logo=ollama&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg">
   <img alt="Ruff" src="https://img.shields.io/badge/lint-ruff-261230?logo=ruff&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-15%20passing-3fb950">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-19%20passing-3fb950">
   <img alt="GPU" src="https://img.shields.io/badge/runs%20on-one%20consumer%20GPU-76B900?logo=nvidia&logoColor=white">
   <img alt="GPU0" src="https://img.shields.io/badge/GPU0-RTX%205080%2016GB-76B900?logo=nvidia&logoColor=white">
   <img alt="GPU1" src="https://img.shields.io/badge/GPU1-RTX%203080%2010GB-76B900?logo=nvidia&logoColor=white">
@@ -91,7 +91,15 @@ $ jobscout "Using only the local job postings, name one company hiring for a Rus
 Ferroline
 ```
 
-The final answer goes to **stdout** (pipeable); the step/tool trace goes to **stderr**.
+The final answer goes to **stdout** (pipeable); the step/tool trace goes to **stderr**, including one
+structured log line per agent step:
+
+```text
+INFO  step=1 tool=python_interpreter,query_jobs,final_answer args=results = query_jobs(...) duration_ms=2300.0
+```
+
+Set `obs.metrics_port` in `config.yaml` to also export Prometheus counters (`jobscout_runs_total`,
+`jobscout_steps`, `jobscout_tool_calls_total{tool=}`, `jobscout_run_latency_seconds`).
 
 ---
 
@@ -232,13 +240,14 @@ code-executing agent on an open port.
 Two tiers. Tier-1 runs in CI with no model; Tier-2 needs Ollama and is opt-in.
 
 ```bash
-pytest                  # Tier-1: deterministic, no LLM (15 tests)
+pytest                  # Tier-1: deterministic, no LLM (19 tests)
 pytest -m integration   # Tier-2: builds the real agent; skips cleanly if Ollama is absent
 ruff check src tests    # lint
 ```
 
 - **Tier-1** covers the data layer (schema normalization, keyword/remote filters, brief length),
-  the tools (`query_jobs`/`get_job`, count header, empty-result sentinel), and config validation.
+  the tools (`query_jobs`/`get_job`, count header, empty-result sentinel), config validation, and the
+  `eval.py` / `ingest_crawler.py` scripts.
 - **Tier-2** builds the real `CodeAgent` and asserts it calls a corpus tool and finalizes within
   `max_steps`. It **skips** (does not fail) when Ollama is unreachable or the model isn't pulled.
 
