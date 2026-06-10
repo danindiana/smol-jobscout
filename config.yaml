@@ -1,0 +1,23 @@
+model:
+  backend: ollama            # ollama | transformers | inference_api
+  model_id: "qwen2.5-coder:14b"   # default; spec's 7b-instruct tag not present on this host
+  api_base: "http://localhost:11434"
+  num_ctx: 8192              # CRITICAL: Ollama default 2048 will fail for agents
+  temperature: 0.2
+  max_tokens: 4096
+
+agent:
+  max_steps: 8
+  verbosity_level: 1
+  planning_interval: 3       # periodic re-planning; null to disable
+  additional_authorized_imports: ["json", "re", "statistics", "datetime"]
+  enable_web_tools: true     # WebSearchTool + VisitWebpageTool
+
+data:
+  path: "data/sample_jobs.jsonl"
+  format: "jsonl"            # jsonl | sqlite
+  sqlite_table: "jobs"       # used when format == sqlite
+
+obs:
+  log_level: "INFO"
+  metrics_port: null         # set to e.g. 9109 to expose Prometheus metrics

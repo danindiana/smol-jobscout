@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smol-jobscout"
+version = "0.1.0"
+description = "Local-first smolagents CodeAgent over crawled job-posting data."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "smolagents[litellm,toolkit]>=1.14",  # litellm -> Ollama; toolkit -> WebSearchTool etc.
+    "litellm>=1.50",
+    "pydantic>=2.7",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+    "rich>=13.7",
+    "prometheus-client>=0.20",
+]
+
+[project.optional-dependencies]
+transformers = ["smolagents[transformers]", "torch", "accelerate"]
+ui = ["gradio>=4.0"]
+dev = ["pytest>=8.0", "pytest-mock>=3.12", "ruff>=0.5", "mypy>=1.10"]
+
+[project.scripts]
+jobscout = "smol_jobscout.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+markers = ["integration: requires a running Ollama server and a pulled model"]
+addopts = "-m 'not integration'"

@@ -1,0 +1,16 @@
+[Unit]
+Description=smol-jobscout Gradio UI
+After=network-online.target ollama.service
+Wants=ollama.service
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/opt/smol-jobscout
+Environment=PATH=/opt/smol-jobscout/.venv/bin
+ExecStart=/opt/smol-jobscout/.venv/bin/python -m smol_jobscout.ui
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
